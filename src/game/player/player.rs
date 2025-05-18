@@ -5,7 +5,8 @@ use bevy::prelude::*;
 pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, (player_setup));
+        app.add_systems(Startup, (player_setup))
+            .add_systems(Update, (update_player));
     }
 }
 
@@ -36,10 +37,16 @@ fn player_setup(
         LinearVelocity::default(),
         AngularVelocity::default(),
         // LinearDamping(0.2),
-        Player{
+        Player {
             acceleration: 100.0,
             damping: 0.2,
             max_speed: 500.0,
+            position: Vec3::ZERO,
         },
     ));
+}
+fn update_player(mut player_query: Query<(&Transform, &mut Player), With<Player>>) {
+    for (player_transform,mut player_component) in player_query.iter_mut() {
+        player_component.position = player_transform.translation;
+    }
 }

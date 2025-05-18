@@ -42,7 +42,7 @@ fn horizontal_movement(
 
         linear_velocity.x = linear_velocity.x.clamp(-max_speed, max_speed);
 
-        println!("Current velocity: {:?}", linear_velocity,);
+        // println!("Current velocity: {:?}", linear_velocity,);
     }
 }
 fn jump(keys: Res<ButtonInput<KeyCode>>, mut q: Query<(&mut LinearVelocity), With<Player>>) {

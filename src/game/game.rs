@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, fmt};
 
 use avian2d::prelude::*;
 use bevy::prelude::*;
@@ -30,6 +30,8 @@ impl Plugin for GamePlugin {
     }
 }
 
+pub const GRIDSIZE: f32 = 50.0;
+pub const MAXPLACEDISTANCE: f32 = 300.0;
 #[derive(PhysicsLayer, Default)]
 pub enum GameLayer {
     #[default]
@@ -46,6 +48,7 @@ pub struct Player {
     pub acceleration: f32,
     pub damping: f32,
     pub max_speed: f32,
+    pub position: Vec3,
 }
 #[derive(Resource)]
 pub struct MousePosWorld {
@@ -76,3 +79,23 @@ pub struct GridCoord {
 }
 #[derive(Resource, Default)]
 pub struct GridMap(pub HashMap<GridCoord, Vec<Entity>>);
+impl GridMap {
+    pub fn total_entity_count(&self) -> usize {
+        self.0.values().map(Vec::len).sum()
+    }
+}
+impl fmt::Debug for GridMap {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(f, "GridMap (total entities: {})", self.total_entity_count())?;
+        for (coord, entities) in &self.0 {
+            writeln!(
+                f,
+                "  {:?}: {} entities -> {:?}",
+                coord,
+                entities.len(),
+                entities
+            )?;
+        }
+        Ok(())
+    }
+}
