@@ -1,16 +1,13 @@
-use super::super::game::GameLayer;
+use super::super::game::{GameLayer, Player};
 use avian2d::prelude::*;
 use bevy::prelude::*;
 
 pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, (player_setup))
-            .add_systems(Update, (funn));
+        app.add_systems(Startup, (player_setup));
     }
 }
-#[derive(Component)]
-struct Player;
 
 fn player_setup(
     mut cmd: Commands,
@@ -32,18 +29,17 @@ fn player_setup(
                 GameLayer::Ground,
                 GameLayer::Enemy,
                 GameLayer::Object,
+                GameLayer::Block,
             ],
         ),
+        ExternalForce::default(),
         LinearVelocity::default(),
-        Player,
+        AngularVelocity::default(),
+        // LinearDamping(0.2),
+        Player{
+            acceleration: 100.0,
+            damping: 0.2,
+            max_speed: 500.0,
+        },
     ));
-}
-
-fn funn(keys: Res<ButtonInput<KeyCode>>, mut q: Query<(&mut LinearVelocity), With<Player>>) {
-    if keys.just_pressed(KeyCode::Space) {
-        for (mut lv) in q.iter_mut() {
-            println!("Bro Jumped!");
-            lv.y = 300.0;
-        }
-    }
 }

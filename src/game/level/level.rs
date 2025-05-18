@@ -18,10 +18,10 @@ fn init_level(
     println!("Hello From level.rs!");
     cmd.spawn((
         RigidBody::Static,
-        Mesh2d(meshes.add(Rectangle::new(200.0, 50.0))),
+        Mesh2d(meshes.add(Rectangle::new(1000.0, 50.0))),
         MeshMaterial2d(materials.add(Color::srgba_u8(10, 100, 10, 255))),
         Transform::from_xyz(0.0, -50.0, 0.0),
-        Collider::rectangle(200.0, 50.0),
+        Collider::rectangle(1000.0, 50.0),
         CollisionLayers::new(
             GameLayer::Ground,
             [
@@ -31,5 +31,7 @@ fn init_level(
                 GameLayer::Object,
             ],
         ),
+        Friction::new(0.0),
     ));
+    
 }

@@ -179,7 +179,7 @@ fn gamepad_input(
 
 /// Updates the [`Grounded`] status for character controllers.
 fn update_grounded(
-    mut commands: Commands,
+    mut cmd: Commands,
     mut query: Query<
         (Entity, &ShapeHits, &Rotation, Option<&MaxSlopeAngle>),
         With<CharacterController>,
@@ -197,9 +197,9 @@ fn update_grounded(
         });
 
         if is_grounded {
-            commands.entity(entity).insert(Grounded);
+            cmd.entity(entity).insert(Grounded);
         } else {
-            commands.entity(entity).remove::<Grounded>();
+            cmd.entity(entity).remove::<Grounded>();
         }
     }
 }
