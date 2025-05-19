@@ -7,7 +7,7 @@ use super::{
     camera::camera,
     input::input,
     level::level,
-    mechanics::mechanics,
+    mechanics::{mechanics,projectile},
     player::{movement, player},
 };
 pub struct GamePlugin;
@@ -21,6 +21,8 @@ impl Plugin for GamePlugin {
             input::InputPlugin,
             mechanics::MechanicsPlugin,
             movement::PlayerMovementPlugin,
+            projectile::ProjectilePlugin,
+
         ))
         .insert_resource(MousePosWorld { x: 0.0, y: 0.0 })
         .insert_resource(MousePosWindow { x: 0.0, y: 0.0 })
@@ -31,6 +33,7 @@ impl Plugin for GamePlugin {
 }
 
 pub const GRIDSIZE: f32 = 50.0;
+pub const GRAVITY: f32 = 10.0;
 pub const MAXPLACEDISTANCE: f32 = 300.0;
 #[derive(PhysicsLayer, Default)]
 pub enum GameLayer {
@@ -41,6 +44,7 @@ pub enum GameLayer {
     Ground,
     Object,
     Block,
+    Projectile,
 }
 
 #[derive(Component)]
@@ -98,4 +102,31 @@ impl fmt::Debug for GridMap {
         }
         Ok(())
     }
+}
+#[derive(Copy, Clone)]
+pub enum TrajectoryType {
+    Projectile,
+    Straight,
+}
+#[derive(Copy, Clone)]
+pub enum SpeedType {
+    Velocity,
+    Accerleration,
+}
+#[derive(Component)]
+pub struct ProjectileAttributes {
+    // pub entity: Entity,
+    pub trajectory_type: TrajectoryType,
+    pub speed_type: SpeedType,
+    pub speed: f32,
+    pub direction: Vec2,
+}
+#[derive(Event, Copy, Clone)]
+pub struct ProjectileCreationEvent {
+    pub entity: Entity,
+    pub trajectory_type: TrajectoryType,
+    pub speed_type: SpeedType,
+    pub speed: f32,
+    pub direction: Vec2,
+    pub origin: Vec2,
 }

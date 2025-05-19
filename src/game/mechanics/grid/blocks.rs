@@ -30,7 +30,7 @@ fn block_system(
         }
         dist
     };
-    println!("{:?}", distance);
+    // println!("{:?}", distance);
     let player_overlap = distance < GRIDSIZE;
     let in_reach = distance < MAXPLACEDISTANCE;
 
@@ -88,5 +88,6 @@ fn block_system(
     }
     // println!("printing GridMap");
 
-    println!("{:?}", gridmap);
+    // println!("{:?}", gridmap);
 }
+
