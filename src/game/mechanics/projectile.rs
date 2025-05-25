@@ -19,6 +19,7 @@ impl Plugin for ProjectilePlugin {
                 player_shoot,
                 handle_projectile_creation,
                 cleanup_projectiles,
+                projectile_logic
             ),
         )
         .add_event::<ProjectileCreationEvent>();
@@ -57,7 +58,7 @@ fn player_shoot(
 
         creation_events.write(ProjectileCreationEvent {
             entity: Entity::from_raw(0),
-            trajectory_type: TrajectoryType::Straight,
+            trajectory_type: TrajectoryType::Projectile,
             speed_type: SpeedType::Velocity,
             speed: 1000.0,
             direction: Vec2::new(1.0, 1.0), // This might be replaced by actual mouse direction
@@ -75,12 +76,12 @@ fn handle_projectile_creation(
     mut materials: ResMut<Assets<ColorMaterial>>,
     mouseposworld: Res<MousePosWorld>,
 ) {
-    for event in creation_events.read() {
-        println!("Event Read!");
-
-        let origin = event.origin;
-        let mouse_position = Vec2::new(mouseposworld.x, mouseposworld.y);
-        let mut direction = mouse_position - origin;
+for event in creation_events.read() {
+    println!("Event Read!");
+    // Removed cmd.entity(event.entity).despawn(); because event.entity is not a valid entity here
+    let origin = event.origin;
+    let mouse_position = Vec2::new(mouseposworld.x, mouseposworld.y);
+    let mut direction = mouse_position - origin;
 
         // Fallback to default direction if zero vector
         if direction.length_squared() == 0.0 {
@@ -95,7 +96,7 @@ fn handle_projectile_creation(
             TrajectoryType::Projectile => 1.0,
             TrajectoryType::Straight => 0.0,
         };
-
+        info!("1");
         let entity = cmd
             .spawn((
                 ProjectileAttributes {
@@ -119,10 +120,12 @@ fn handle_projectile_creation(
                     ..Default::default()
                 },
                 LinearVelocity(direction * event.speed),
+                Sensor,
+                CollisionEventsEnabled
             ))
             .id();
 
-        println!("Spawned projectile entity: {:?}", entity);
+        // println!("Spawned projectile entity: {:?}", entity);
     }
 }
 
@@ -136,20 +139,29 @@ fn cleanup_projectiles(
     if keys.just_pressed(KeyCode::KeyH) {
         for (entity, projectile) in projectiles.iter() {
             cmd.entity(entity).despawn();
-            debug!("Projectile despawned");
+            // debug!("Projectile despawned");
         }
     }
     if let Ok(player_transform) = player.single() {
         let player_translation = player_transform.translation;
         //did not detect any projectiles
         for (_, projectile_transform) in projectiles.iter() {
-            debug!("hooray!");
+            // debug!("hooray!");
 
             let distance = (player_translation - projectile_transform.translation).length();
 
             if distance > 1000.0 {
-                debug!("Projectile despawned");
+                // debug!("Projectile despawned");
             }
         }
     }
+}
+
+fn projectile_logic(mut cmd: Commands,mut collision_event_reader: EventReader<CollisionStarted>){
+    for CollisionStarted(entity1, entity2) in collision_event_reader.read() {
+        info!("1");
+        println!("{entity1} and {entity2} started colliding");
+        
+    }
+
 }

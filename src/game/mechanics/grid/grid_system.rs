@@ -1,4 +1,4 @@
-use crate::game::game::{GRIDSIZE, GridSelectorCoord, GridSelectorPos, MousePosWorld};
+use crate::game::game::{GRIDSIZE,GridSelector,GridSelectorCoord, GridSelectorPos, MousePosWorld};
 use avian2d::{math::*, prelude::*};
 use bevy::{gizmos::grid, prelude::*};
 pub struct GridSystemPlugin;
@@ -8,8 +8,7 @@ impl Plugin for GridSystemPlugin {
             .add_systems(Update, (gridselect));
     }
 }
-#[derive(Component)]
-struct GridSelector;
+
 
 fn spawngridselector(
     mut cmd: Commands,
@@ -24,7 +23,7 @@ fn spawngridselector(
         GridSelector,
         Transform::from_xyz(0.0, 0.0, 0.0),
         Mesh2d(meshes.add(Rectangle::new(GRIDSIZE, GRIDSIZE))),
-        MeshMaterial2d(materials.add(Color::srgba_u8(255, 255, 255, 100))),
+        MeshMaterial2d(materials.add(Color::srgba_u8(255, 255, 255, 50))),
     ))
     .with_children(|parent| {
         parent.spawn((

@@ -7,7 +7,7 @@ use super::{
     camera::camera,
     input::input,
     level::level,
-    mechanics::{mechanics,projectile},
+    mechanics::{mechanics, projectile},
     player::{movement, player},
 };
 pub struct GamePlugin;
@@ -22,7 +22,6 @@ impl Plugin for GamePlugin {
             mechanics::MechanicsPlugin,
             movement::PlayerMovementPlugin,
             projectile::ProjectilePlugin,
-
         ))
         .insert_resource(MousePosWorld { x: 0.0, y: 0.0 })
         .insert_resource(MousePosWindow { x: 0.0, y: 0.0 })
@@ -35,6 +34,7 @@ impl Plugin for GamePlugin {
 pub const GRIDSIZE: f32 = 50.0;
 pub const GRAVITY: f32 = 10.0;
 pub const MAXPLACEDISTANCE: f32 = 300.0;
+pub const PLAYERSIZE: f32 = 50.0;
 #[derive(PhysicsLayer, Default)]
 pub enum GameLayer {
     #[default]
@@ -46,7 +46,8 @@ pub enum GameLayer {
     Block,
     Projectile,
 }
-
+#[derive(Component)]
+pub struct JumpSensor;
 #[derive(Component)]
 pub struct Player {
     pub acceleration: f32,
@@ -81,6 +82,8 @@ pub struct GridCoord {
     pub x: i32,
     pub y: i32,
 }
+#[derive(Component)]
+pub struct GridSelector;
 #[derive(Resource, Default)]
 pub struct GridMap(pub HashMap<GridCoord, Vec<Entity>>);
 impl GridMap {
@@ -130,3 +133,8 @@ pub struct ProjectileCreationEvent {
     pub direction: Vec2,
     pub origin: Vec2,
 }
+
+#[derive(Event, Copy, Clone)]
+pub struct BlockPlaceEvent ;
+#[derive(Event, Copy, Clone)]
+pub struct BlockBreakEvent ;
